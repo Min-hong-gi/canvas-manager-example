@@ -161,7 +161,7 @@ export class Grape {
             const y = rh`${(this.renderData[colsArray[i]]) * marginH}`.crisp - (paddingB);
 
             canvas.draw((ctx) => {
-                ctx.lineWidth = 5;
+                ctx.lineWidth = 2;
 
                 ctx.moveTo(px, py);
                 ctx.lineTo(x, y);
@@ -178,7 +178,7 @@ export class Grape {
             dot.x = x;
             dot.y = y;
             dot.value = (this.renderData[colsArray[i]]).toFixed(0);
-            dot.size = 30;
+            dot.size = 10;
 
             dot.render(canvas);
         }

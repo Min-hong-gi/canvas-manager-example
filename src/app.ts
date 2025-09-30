@@ -6,12 +6,10 @@ import { Grape } from "./graph/Graph";
 
 const canvasEl = document.querySelector('#main-canvas') as HTMLCanvasElement;
 const mainCanvas = new CanvasManager(canvasEl);
-mainCanvas.scale = 3;
 mainCanvas.resize();
 
 const eventManager = new EventManager(canvasEl);
 const mainEvent = eventDecoratorFactory(eventManager);
-eventManager.scale = 3;
 const grapeData = {
     '0': rand(1, 10) * 100,
     '1': rand(1, 10) * 100,

@@ -1,0 +1,17 @@
+{
+  "name": "2d-canvas-supportor-example",
+  "version": "1.0.0",
+  "description": "2d canvas supportor exmpale project 1",
+  "main": "./js/app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.2",
+    "webpack": "^5.102.0",
+    "webpack-cli": "^6.0.1"
+  }
+}

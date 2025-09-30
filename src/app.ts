@@ -48,12 +48,14 @@ grape.dots.forEach(x => {
         x.fixed = !x.fixed;
     });
     x.addEventListener('mouseenter', () => {
+        x.hover = true;
         animate((t) => {
             x.opacity = lerp(0, 1, t);
         }, 0.1);
         canvasEl.style.cursor = 'pointer';
     });
     x.addEventListener('mouseleave', () => {
+        x.hover = false;
         animate((t) => {
             x.opacity = lerp(1, 0, t);
         }, 0.1);

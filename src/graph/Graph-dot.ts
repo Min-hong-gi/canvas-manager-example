@@ -9,6 +9,7 @@ export class GrapeDot extends CanvasEventTarget {
     value: any = null;
     opacity = 0;
     fixed = false;
+    hover = false;
 
     hasInside(x: number, y: number): boolean {
         return len(subtract({ x, y }, { x: this.x, y: this.y })) <= this.size;
@@ -24,7 +25,7 @@ export class GrapeDot extends CanvasEventTarget {
     render(canvas: CanvasManager) {
         canvas.draw((ctx) => {
             ctx.fillStyle = '#3af';
-            if(this.fixed || this.__hover) {
+            if(this.fixed || this.hover) {
                 ctx.fillStyle = '#f56';
             }
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);

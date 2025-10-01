@@ -2,6 +2,9 @@ import { CanvasManager } from "2d-canvas-supportor/manager";
 import { Unit } from "2d-canvas-supportor/unit";
 import { GrapeDot } from "./Graph-dot";
 
+const GAP_SCALE = 3;
+const PADDING_SCALE = 3;
+
 export class Grape {
     fontSize: number;
     width: number;
@@ -9,11 +12,14 @@ export class Grape {
     #data: GrapeData = {};
     #renderData: GrapeData = {};
     dots: GrapeDot[] = [];
+    slide =0;
+    min = 0;
+    max = 0;
     constructor(width: number, height: number, data: GrapeData) {
         this.width = width;
         this.height = height;
         this.#data = data || this.#data;
-        this.fontSize = Math.min(Math.floor(width / 100), 25);
+        this.fontSize = Math.max(Math.floor(width / 100), 20);
         this.renderData = this.#data;
     }
     set data(data: GrapeData) {
@@ -36,36 +42,42 @@ export class Grape {
     resize(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.fontSize = Math.min(Math.floor(width / 100), 25);
+        this.fontSize = Math.max(Math.floor(width / 100), 20);
     }
     render(canvas: CanvasManager) {
         const cols: Set<string> = new Set();
         let max = -Infinity;
+        let min = Infinity;
         Object.keys(this.renderData).forEach(x => {
             cols.add(x);
-            if (this.#data[x] > max) {
-                max = this.#data[x];
+            if (this.#renderData[x] > max) {
+                max = this.#renderData[x];
+            }
+            if (this.#renderData[x] < min) {
+                min = this.#renderData[x];
             }
         });
+        max = Math.max(this.max, max);
+        min = Math.min(this.min, min);
 
         let fontSize = this.fontSize * canvas.scale;
 
 
         // 그래프 밖 글자 영역
-        let paddingL = fontSize * 4;
+        let paddingL = fontSize * PADDING_SCALE;
         let paddingR = 0;
-        let paddingT = fontSize * 4;
-        let paddingB = fontSize * 4;
+        let paddingT = fontSize * PADDING_SCALE;
+        let paddingB = fontSize * PADDING_SCALE;
 
         // 그래프 속성 글자 출력 간격
         let marginW = (this.width - (paddingL + paddingR)) / (cols.size + 1);
         // 그래프 값 1당 움직이는 거리
-        let marginH = (this.height - (paddingT + paddingB)) / max;
+        let marginH = ((this.height - paddingT) - (paddingT + paddingB)) / (max - min);
         if (max === 0) {
             marginH = 0;
         }
         // 값 가늠선 최소 거리
-        let gap = fontSize * 3;
+        let gap = fontSize * GAP_SCALE;
 
         const colsArray = Array.from(cols);
 
@@ -107,19 +119,15 @@ export class Grape {
 
         // 적절한 가늠자 개수 및 가늠자 별 간격 계산
         const n = paddingB;
-        const m = this.height - (paddingT + paddingB);
+        const m = this.height - (paddingT + paddingB + paddingT);
         const L = Math.floor((m - n) / gap) + 1;
         const d = m / (L - 1);
 
         // 가늠자 문자 출력
         canvas.draw((ctx) => {
-            for (let i = 1; i < L; i++) {
-                let print = `${((i * d) / marginH).toFixed(0)}`;
-                if (marginH === 0) {
-                    print = '0'
-                    return;
-                }
-                ctx.fillText(print, paddingL / 2, rh`${i * d}`.crisp - paddingB);
+            for (let i = 0; i < L; i++) {
+                let print = `${(((i * d) / marginH) + min).toFixed(0)}`;
+                ctx.fillText(print, paddingL / 2, rh`${i * d}`.crisp - paddingB - paddingT);
             }
         });
 
@@ -153,12 +161,14 @@ export class Grape {
 
         }
 
+        let slide = this.slide;
+
         // 값 라인 그래프 출력
         for (let i = 1; i < colsArray.length; i++) {
-            const px = Unit.wrap((paddingL) + (marginW * i)).crisp;
-            const py = Unit.wrap(i > 0 ? +rh`${this.renderData[colsArray[i - 1]] * marginH}` : this.height - paddingT).crisp - (paddingB);
-            const x = Unit.wrap((paddingL) + (marginW * (i + 1))).crisp;
-            const y = rh`${(this.renderData[colsArray[i]]) * marginH}`.crisp - (paddingB);
+            const px = slide + Unit.wrap((paddingL) + (marginW * i)).crisp;
+            const py = Unit.wrap(i > 0 ? +rh`${(this.renderData[colsArray[i - 1]] - min) * marginH}` : this.height - paddingT).crisp - paddingB - paddingT;
+            const x = slide + Unit.wrap((paddingL) + (marginW * (i + 1))).crisp;
+            const y = rh`${((this.renderData[colsArray[i]] - min)) * marginH}`.crisp - paddingB - paddingT;
 
             canvas.draw((ctx) => {
                 ctx.lineWidth = 2;
@@ -171,8 +181,8 @@ export class Grape {
 
         // 값 포인트 출력
         for (let i = colsArray.length - 1; i >= 0; i--) {
-            const x = Unit.wrap((paddingL) + (marginW * (i + 1))).crisp;
-            const y = rh`${(this.renderData[colsArray[i]]) * marginH}`.crisp - (paddingB);
+            const x = slide + Unit.wrap((paddingL) + (marginW * (i + 1))).crisp;
+            const y = rh`${((this.renderData[colsArray[i]] - min)) * marginH}`.crisp - paddingB - paddingT;
 
             let dot = this.dots[i];
             dot.x = x;

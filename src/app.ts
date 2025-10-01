@@ -3,6 +3,7 @@ import { CanvasManager, eventDecoratorFactory, EventManager } from "2d-canvas-su
 import { lerp, rand } from "2d-canvas-supportor/util";
 import { GrapeDot } from "./graph/Graph-dot";
 import { Grape } from "./graph/Graph";
+import { sec } from "2d-canvas-supportor/unit";
 
 const canvasEl = document.querySelector('#main-canvas') as HTMLCanvasElement;
 const mainCanvas = new CanvasManager(canvasEl);
@@ -11,33 +12,34 @@ mainCanvas.resize();
 const eventManager = new EventManager(canvasEl);
 const mainEvent = eventDecoratorFactory(eventManager);
 const grapeData = {
-    '0': rand(1, 10) * 100,
-    '1': rand(1, 10) * 100,
-    '2': rand(1, 10) * 100,
-    '3': rand(1, 10) * 100,
-    '4': rand(1, 10) * 100,
-    '5': rand(1, 10) * 100,
-    '6': rand(1, 10) * 100,
-    '7': rand(1, 10) * 100,
-    '8': rand(1, 10) * 100,
-    '9': rand(1, 10) * 100,
-    '10': rand(1, 10) * 100,
-    '11': rand(1, 10) * 100,
-    '12': rand(1, 10) * 100,
-    '13': rand(1, 10) * 100,
-    '14': rand(1, 10) * 100,
-    '15': rand(1, 10) * 100,
-    '16': rand(1, 10) * 100,
-    '17': rand(1, 10) * 100,
-    '18': rand(1, 10) * 100,
-    '19': rand(1, 10) * 100,
-    '20': rand(1, 10) * 100,
-    '21': rand(1, 10) * 100,
-    '22': rand(1, 10) * 100,
-    '23': rand(1, 10) * 100,
-    '24': rand(1, 10) * 100,
+    '1': 0,
+    '2': 0,
+    '3': 0,
+    '4': 0,
+    '5': 0,
+    '6': 0,
+    '7': 0,
+    '8': 0,
+    '9': 0,
+    '10': 0,
+    '11': 0,
+    '12': 0,
+    '13': 0,
+    '14': 0,
+    '15': 0,
+    '16': 0,
+    '17': 0,
+    '18': 0,
+    '19': 0,
+    '20': 0,
+    '21': 0,
+    '22': 0,
+    '23': 0,
+    '24': 0,
 }
 const grape = new Grape(mainCanvas.canvasWidth, mainCanvas.canvasHeight, grapeData);
+grape.min = 0;
+grape.max = 1000;
 
 
 @mainEvent
@@ -51,14 +53,14 @@ grape.dots.forEach(x => {
         x.hover = true;
         animate((t) => {
             x.opacity = lerp(0, 1, t);
-        }, 0.1);
+        }, sec`0.1`);
         canvasEl.style.cursor = 'pointer';
     });
     x.addEventListener('mouseleave', () => {
         x.hover = false;
         animate((t) => {
             x.opacity = lerp(1, 0, t);
-        }, 0.1);
+        }, sec`0.1`);
         canvasEl.style.cursor = 'auto';
     });
 });
@@ -80,11 +82,41 @@ frameLate(60,
         grape.render(mainCanvas);
     }
 );
-
-animate((t, delta, alpha) => {
-    let renderData: { [k: string]: number } = {};
-    Object.keys(grape.data).forEach(key => {
-        renderData[key] = lerp(0, grape.data[key], t);
+setInterval(() => {
+    const origin = grape.data;
+    const nData: { [k: string]: number } = {
+        '1': rand(-500, 1000),
+        '2': rand(-500, 1000),
+        '3': rand(-500, 1000),
+        '4': rand(-500, 1000),
+        '5': rand(-500, 1000),
+        '6': rand(-500, 1000),
+        '7': rand(-500, 1000),
+        '8': rand(-500, 1000),
+        '9': rand(-500, 1000),
+        '10': rand(-500, 1000),
+        '11': rand(-500, 1000),
+        '12': rand(-500, 1000),
+        '13': rand(-500, 1000),
+        '14': rand(-500, 1000),
+        '15': rand(-500, 1000),
+        '16': rand(-500, 1000),
+        '17': rand(-500, 1000),
+        '18': rand(-500, 1000),
+        '19': rand(-500, 1000),
+        '20': rand(-500, 1000),
+        '21': rand(-500, 1000),
+        '22': rand(-500, 1000),
+        '23': rand(-500, 1000),
+        '24': rand(-500, 1000),
+    }
+    animate((t, delta, alpha) => {
+        let renderData: { [k: string]: number } = {};
+        Object.keys(nData).forEach(key => {
+            renderData[key] = lerp(origin[key], nData[key], t);
+        });
+        grape.renderData = renderData;
+    }, sec`1`, 60, ()=>{
+        grape.data = nData;
     });
-    grape.renderData = renderData;
-}, 1);
+}, sec`5`);

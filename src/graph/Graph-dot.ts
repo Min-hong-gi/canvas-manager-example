@@ -25,7 +25,10 @@ export class GrapeDot extends CanvasEventTarget {
     render(canvas: CanvasManager) {
         canvas.draw((ctx) => {
             ctx.fillStyle = '#3af';
-            if(this.fixed || this.hover) {
+            if(this.hover) {
+                ctx.fillStyle = '#f34';
+            }
+            if(this.fixed) {
                 ctx.fillStyle = '#f56';
             }
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);

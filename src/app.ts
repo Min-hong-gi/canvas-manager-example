@@ -38,14 +38,12 @@ const grapeData = {
     '24': 0,
 }
 const grape = new Grape(mainCanvas.canvasWidth, mainCanvas.canvasHeight, grapeData);
-grape.min = 0;
-grape.max = 1000;
-
 
 @mainEvent
 class EventTarget extends GrapeDot { }
 grape.dots = Array.from({ length: Object.keys(grape.renderData).length }, () => new EventTarget());
 grape.dots.forEach(x => {
+    x.fixed = true;
     x.addEventListener('click', () => {
         x.fixed = !x.fixed;
     });
@@ -119,4 +117,4 @@ setInterval(() => {
     }, sec`1`, 60, ()=>{
         grape.data = nData;
     });
-}, sec`5`);
+}, sec`3`);

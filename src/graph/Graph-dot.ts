@@ -43,7 +43,7 @@ export class GrapeDot extends CanvasEventTarget {
             ctx.textAlign = 'left';
             ctx.textBaseline = 'top';
             const matrics = ctx.measureText(this.value);
-            const height = matrics.actualBoundingBoxDescent * 1.2;
+            const height = Math.floor(matrics.actualBoundingBoxDescent * 1.5);
             ctx.fillRect(this.x+ this.size * 2, this.y - height/2, matrics.width, height);
         });
         canvas.draw((ctx) => {

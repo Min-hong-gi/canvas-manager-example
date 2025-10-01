@@ -66,7 +66,7 @@ export class Grape {
         // 그래프 밖 글자 영역
         let paddingL = fontSize * PADDING_SCALE;
         let paddingR = 0;
-        let paddingT = fontSize * PADDING_SCALE;
+        let paddingT = fontSize * (PADDING_SCALE / 2);
         let paddingB = fontSize * PADDING_SCALE;
 
         // 그래프 속성 글자 출력 간격
@@ -127,6 +127,9 @@ export class Grape {
         canvas.draw((ctx) => {
             for (let i = 0; i < L; i++) {
                 let print = `${(((i * d) / marginH) + min).toFixed(0)}`;
+                if(marginH === 0) {
+                    print = `0`;
+                }
                 ctx.fillText(print, paddingL / 2, rh`${i * d}`.crisp - paddingB - paddingT);
             }
         });
